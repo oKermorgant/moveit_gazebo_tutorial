@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <arg name="r" default="0"/>
+    <arg name="p" default="0"/>
+    <arg name="y" default="0"/>
+    
+    
+        <node pkg="tf2_ros" type="static_transform_publisher" name="cam_pose" args = "0 0 0 $(arg r) $(arg p) $(arg y) kinect_body kinect_cam" />
+
+
+</launch>
+
+

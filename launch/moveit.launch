@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    
+   <!-- Base MoveIt! context  -->
+    <remap from="/follow_joint_trajectory" to="/arm_controller/follow_joint_trajectory"/>
+    <include file="$(find ur10_moveit_config)/launch/ur10_moveit_planning_execution.launch">
+        <param name="sim" value="true"/>
+        <param name="limited" value="true"/>
+    </include>
+    
+      <!-- Sensors Functionality -->
+    <group ns="move_group">
+        <rosparam command="load" file="$(find moveit_gazebo_tutorial)/models/sensors_kinect.yaml" />
+    </group>
+
+
+</launch>
+
+

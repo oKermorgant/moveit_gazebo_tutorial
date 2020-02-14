@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <arg name="laser" default="true"/>
+        
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_house.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+    </include>
+  
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find moveit_gazebo_tutorial)/launch/config.rviz" respawn="false" />
+    
+    <group if="$(arg laser)">             
+        <node name="converter" pkg="moveit_gazebo_tutorial" type="pc_convert"/>
+        <node name="spawn_kinect" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find moveit_gazebo_tutorial)/models/kinect_laser.sdf -model kinect -x -0.11 -y 2.19 -z 2.56 -P 0.8 -Y 3.1415" respawn="false" output="screen" />
+        <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_pose" args = "-0.11 2.19 2.56 3.1415 0.8 0 world kinect_body " />
+        <node pkg="tf2_ros" type="static_transform_publisher" name="cam_pose" args = "0 0 0 0 0 0 kinect_body kinect_cam" />
+    </group>
+    
+    <group unless="$(arg laser)">    
+        <node name="spawn_kinect" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find moveit_gazebo_tutorial)/models/kinect.sdf -model kinect -x -0.11 -y 2.19 -z 2.56 -P 0.8 -Y 3.1415" respawn="false" output="screen" />
+        <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_pose" args = "-0.11 2.19 2.56 3.1415 0.8 0 world kinect_body " />
+        <node pkg="tf2_ros" type="static_transform_publisher" name="cam_pose" args = "0 0 0 -1.57 0 -1.57 kinect_body kinect_cam" />
+    </group>
+
+  <!-- send robot urdf to param server -->
+    <arg name="ur_model" default="ur10_joint_limited_robot.urdf.xacro"/>   <!-- ur10_robot.urdf.xacro / ur10_joint_limited_robot.urdf.xacro -->
+    
+  <param name="robot_description" command="$(find xacro)/xacro '$(find moveit_gazebo_tutorial)/models/$(arg ur_model)' ur_x:=-2.159 ur_y:=2.233 ur_z:=1.041" />
+      
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_ur" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model ur10 " respawn="false" output="screen" />
+<!--   <node pkg="tf2_ros" type="static_transform_publisher" name="ur_pose" args = "-2.159 2.233 1.041 0 0 0 world base_link " /> -->
+
+  <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
+
+  <rosparam file="$(find ur_gazebo)/controller/arm_controller_ur10.yaml" command="load"/>
+  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
+
+</launch>
+
+

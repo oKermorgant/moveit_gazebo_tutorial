@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="kinect">
+    <static>true</static>
+    <link name="kinect_body">        
+      <inertial>
+        <mass>0.1</mass>
+      </inertial>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://kinect/meshes/kinect.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+       <sensor name="sensor_ray" type="ray">
+                <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+                <ray>
+                    <scan display="true">
+                        <horizontal>
+                            <samples>300</samples>
+                            <resolution>1.0</resolution>
+                            <min_angle>-0.85</min_angle>
+                            <max_angle>0.85</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>100</samples>
+                            <resolution>1.0</resolution>
+                            <min_angle>-0.85</min_angle>
+                            <max_angle>0.85</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.1</min>
+                        <max>5.0</max>
+                    </range>
+                </ray>
+                <!-- test plugin -->
+                <plugin name="plugin_1" filename="libgazebo_ros_block_laser.so">
+                    <gaussianNoise>0.00</gaussianNoise>
+                    <alwaysOn>true</alwaysOn>
+                    <updateRate>20</updateRate>
+                    <topicName>/kinect/3d_cloud</topicName>
+                    <frameName>kinect_cam</frameName>
+                </plugin>
+                <always_on>true</always_on>
+                <update_rate>10.0</update_rate>
+            </sensor>
+    </link>
+    
+  </model>
+</sdf>

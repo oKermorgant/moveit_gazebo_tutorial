@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro"
+       name="ur10" >
+    
+   <xacro:arg name="ur_x" default="0" /> 
+   <xacro:arg name="ur_y" default="0" /> 
+   <xacro:arg name="ur_z" default="0" /> 
+
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
+
+  <!-- ur10 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur10.urdf.xacro" />
+
+  <!-- arm -->
+  <xacro:ur10_robot prefix="" joint_limited="true"
+		 shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
+		 shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}"
+		 elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}"
+		 wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}"
+		 wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}"
+		 wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}"
+/>
+
+  <link name="world" />
+  
+    <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "base_link" />
+    <origin xyz="$(arg ur_x) $(arg ur_y) $(arg ur_z)" rpy="0.0 0.0 0.0" />
+  </joint>
+
+</robot>
